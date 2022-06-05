@@ -1,5 +1,4 @@
 const API_ROOT = "http://localhost:8000";
-const CHATS = `${API_ROOT}/chats`;
 
 export async function getChatsByUserId(userId) {
   const response = await fetch(`${API_ROOT}/chats/chatsByUserId/${userId}`);
@@ -31,6 +30,18 @@ export async function sendMessage(payload: {
 }
 
 export async function pollingSubscriber() {
+  const response = await fetch(`${API_ROOT}/messages/subscribe`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.json();
+}
+
+export async function pullNewMessages() {
   const response = await fetch(`${API_ROOT}/messages/subscribe`, {
     method: "POST",
     headers: {
