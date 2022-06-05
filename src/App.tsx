@@ -1,8 +1,22 @@
-import type { Component } from "solid-js";
-
-const App: Component = () => {
+import { ConversationList } from "@/components/ConversationList";
+import { Menu } from "@/components/Menu";
+import { ChatWindow } from "@/components/ChatWindow";
+import { useMessenger } from "@/components/MessengerContext";
+const App = () => {
+  const { chats, messages, currentCorrespondent, sendMessage } = useMessenger();
   return (
-    <p class="text-4xl text-green-700 text-center py-20">Hello tailwind!</p>
+    <div class="grid grid-cols-desktop grid-rows-desktop">
+      <Menu>
+        <ConversationList chats={chats} />
+      </Menu>
+      {currentCorrespondent() && (
+        <ChatWindow
+          messages={messages}
+          currentCorrespondent={currentCorrespondent}
+          sendMessage={sendMessage}
+        />
+      )}
+    </div>
   );
 };
 

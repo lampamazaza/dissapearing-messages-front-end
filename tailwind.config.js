@@ -5,7 +5,14 @@ module.exports = {
   ],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        desktop: "300px 1fr",
+      },
+      gridTemplateRows: {
+        desktop: "100vh",
+      },
+    },
   },
   plugins: [],
 };
