@@ -11,6 +11,7 @@ export const ConversationList: Component = (props) => {
             name={name}
             lastMessage={lastMessage?.text}
             publicKey={publicKey}
+            isActive={props.currentCorrespondent().publicKey === publicKey}
             alias={alias}
           />
         )}

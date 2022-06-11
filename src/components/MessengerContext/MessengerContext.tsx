@@ -133,7 +133,6 @@ export function MessengerContextProvider(props) {
         messages: () => messages()[currentOpenedCorrespondentPublicKey()],
         currentCorrespondent: () =>
           chats()[currentOpenedCorrespondentPublicKey()],
-
         sendMessage: send,
       }}
     >

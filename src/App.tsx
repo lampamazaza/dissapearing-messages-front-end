@@ -9,7 +9,10 @@ const App = () => {
   return (
     <div class="grid grid-cols-desktop grid-rows-desktop">
       <Menu>
-        <ConversationList chats={chats} />
+        <ConversationList
+          chats={chats}
+          currentCorrespondent={currentCorrespondent}
+        />
       </Menu>
       {currentCorrespondent() && (
         <ChatWindow

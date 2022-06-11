@@ -23,10 +23,14 @@ export const ChatWindow = (props) => {
         style={{
           height: "calc(100vh - 140px)",
         }}
-        class="flex flex-1 flex-col overflow-scroll bg-white  border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+        class="bg-chat flex flex-1 flex-col overflow-scroll bg-white  border-gray-200 dark:bg-gray-800 dark:border-gray-700 p-[20px]"
       >
         <For each={props.messages()}>
-          {({ text }) => <Message text={text} />}
+          {({ text, sender, sentAt }) => {
+            const isMine = props.currentCorrespondent().publicKey !== sender;
+            const name = isMine ? "a" : props.currentCorrespondent().user.name;
+            return <Message text={text} name={name} date={sentAt} />;
+          }}
         </For>
       </div>
       <ControlPanel onSend={props.sendMessage} />
