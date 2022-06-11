@@ -8,11 +8,11 @@ export const ConversationItem = (props: {
   return (
     <a
       href={`#${props.publicKey}`}
-      class={`flex flex-col cursor-pointer p-6  ${
+      class={`flex flex-col cursor-pointer p-4  ${
         props.isActive ? "bg-gray-100" : "bg-white"
       } dark:bg-gray-800 dark:hover:bg-gray-700`}
     >
-      <h5 class="mb-2 text-20 font-bold tracking-tight text-gray-900 dark:text-white">
+      <h5 class="text-20 font-bold tracking-tight text-gray-900 dark:text-white">
         {props.name}
       </h5>
       <p class="font-normal text-14 text-gray-700 dark:text-gray-400">
