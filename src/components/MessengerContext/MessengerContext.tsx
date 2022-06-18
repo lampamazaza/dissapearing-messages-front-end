@@ -13,11 +13,13 @@ import {
   sendMessage,
   pollingSubscriber,
 } from "./api";
+import { goToAuth } from "./routerUtils";
 import { getCurrentHashValue, findUserInChats, normalizeByKey } from "./utils";
 export const MessengerContext = createContext();
 
 export function MessengerContextProvider(props) {
-  const currentUserPublicKey = "a";
+  const [currentUser, setCurrentUser] = createSignal(null);
+  const currentUserPublicKey = null;
 
   const [
     currentOpenedCorrespondentPublicKey,
@@ -25,12 +27,36 @@ export function MessengerContextProvider(props) {
   ] = createSignal(getCurrentHashValue());
 
   addEventListener("hashchange", () => {
-    setcurrentOpenedCorrespondentPublicKey(getCurrentHashValue());
+    const currentHashValue = getCurrentHashValue();
+    setcurrentOpenedCorrespondentPublicKey(currentHashValue);
   });
 
   const [chats, setChats] = createSignal([]);
   const [messages, setMessages] = createSignal({});
   const [isInited, setIsInited] = createSignal(false);
+
+  onMount(async () => {
+    if (currentUser() === null) {
+      console.log("test");
+      goToAuth();
+      return;
+    }
+    const userPublicKey = currentOpenedCorrespondentPublicKey();
+
+    //init
+    const [chats, messages] = await Promise.all([
+      getChatsByUserId(currentUserPublicKey),
+      userPublicKey !== "" ? getMessagesInChat(userPublicKey) : null,
+    ]);
+
+    batch(() => {
+      setChats(normalizeByKey(chats, "publicKey"));
+      setMessages(userPublicKey ? { [userPublicKey]: messages } : {});
+      setIsInited(true);
+    });
+
+    startPolling();
+  });
 
   async function startPolling() {
     try {
@@ -64,24 +90,6 @@ export function MessengerContextProvider(props) {
       console.error(error);
     }
   }
-
-  onMount(async () => {
-    const userPublicKey = currentOpenedCorrespondentPublicKey();
-
-    //init
-    const [chats, messages] = await Promise.all([
-      getChatsByUserId(currentUserPublicKey),
-      userPublicKey !== "" ? getMessagesInChat(userPublicKey) : null,
-    ]);
-
-    batch(() => {
-      setChats(normalizeByKey(chats, "publicKey"));
-      setMessages(userPublicKey ? { [userPublicKey]: messages } : {});
-      setIsInited(true);
-    });
-
-    startPolling();
-  });
 
   createEffect(async () => {
     const currentCorrespondentPublicKey = currentOpenedCorrespondentPublicKey();
@@ -134,6 +142,7 @@ export function MessengerContextProvider(props) {
         currentCorrespondent: () =>
           chats()[currentOpenedCorrespondentPublicKey()],
         sendMessage: send,
+        currentUser,
       }}
     >
       {props.children}

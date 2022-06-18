@@ -3,10 +3,14 @@ import { Menu } from "@/components/Menu";
 import { ChatWindow } from "@/components/ChatWindow";
 import { useMessenger } from "@/components/MessengerContext";
 import { createEffect } from "solid-js";
-const App = () => {
-  const { chats, messages, sendMessage, currentCorrespondent } = useMessenger();
+import { Authentication } from "@/components/Authentication";
+import { AuthenticationContextProvider } from "./components/Authentication/AuthenticationContext/AuthenticationContext";
 
-  return (
+const App = () => {
+  const { chats, messages, sendMessage, currentCorrespondent, currentUser } =
+    useMessenger();
+
+  return currentUser() ? (
     <div class="grid grid-cols-desktop grid-rows-desktop">
       <Menu>
         <ConversationList
@@ -22,6 +26,10 @@ const App = () => {
         />
       )}
     </div>
+  ) : (
+    <AuthenticationContextProvider>
+      <Authentication />
+    </AuthenticationContextProvider>
   );
 };
 
