@@ -8,7 +8,7 @@ import {
   batch,
 } from "solid-js";
 import { initMessengerApi } from "./api";
-import { getCurrentHashValue, findUserInChats, normalizeByKey } from "./utils";
+import { getCurrentHashValue, normalizeByKey } from "./utils";
 import { useAuthenctionContext } from "@/components/Authentication/AuthenticationContext/AuthenticationContext";
 
 export const MessengerContext = createContext();
@@ -36,7 +36,7 @@ export function MessengerContextProvider(props) {
   const init = async () => {
     if (!isInited()) {
       api = initMessengerApi(accessToken());
-      const alias = currentOpenedCorrespondentPublicKey();
+      const alias = new URLSearchParams(window.location.search).get("m");
       //init
       const chats = await api.getChatsByUserId(currentUser().publicKey);
       let currentChatMessages = [];
@@ -68,6 +68,9 @@ export function MessengerContextProvider(props) {
             : {}
         );
         setIsInited(true);
+        if (correspondentPublicKey) {
+          window.location.hash = correspondentPublicKey;
+        }
       });
       startPolling();
     }
@@ -81,8 +84,8 @@ export function MessengerContextProvider(props) {
 
   async function startPolling() {
     try {
-      const activeChatPublicKey = getCurrentHashValue();
       const data = await api.pollingSubscriber();
+      const activeChatPublicKey = currentOpenedCorrespondentPublicKey();
       for (let publicKey in data) {
         if (publicKey === activeChatPublicKey) {
           const messagesToAdd = data[activeChatPublicKey];
@@ -98,7 +101,7 @@ export function MessengerContextProvider(props) {
               ...value,
               ...{
                 [publicKey]: Object.assign({}, value[publicKey], {
-                  lastMessage: messagesToAdd.text,
+                  lastMessage: messagesToAdd.pop(),
                 }),
               },
             };
@@ -134,9 +137,10 @@ export function MessengerContextProvider(props) {
           }
         }
       }
-      setTimeout(() => startPolling(), 2000);
     } catch (error) {
       console.error(error);
+    } finally {
+      setTimeout(() => startPolling(), 2000);
     }
   }
 
