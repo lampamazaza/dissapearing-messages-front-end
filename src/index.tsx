@@ -4,12 +4,18 @@ import { render } from "solid-js/web";
 
 import App from "./App";
 import { MessengerContextProvider } from "./components/MessengerContext/MessengerContext";
+import { AuthenticationContextProvider } from "./components/Authentication/AuthenticationContext/AuthenticationContext";
+
+const root = document.getElementById("root");
+root.innerHTML = "";
 
 render(
   () => (
-    <MessengerContextProvider>
-      <App />
-    </MessengerContextProvider>
+    <AuthenticationContextProvider>
+      <MessengerContextProvider>
+        <App />
+      </MessengerContextProvider>
+    </AuthenticationContextProvider>
   ),
-  document.getElementById("root") as HTMLElement
+  root as HTMLElement
 );

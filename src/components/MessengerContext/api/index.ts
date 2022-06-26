@@ -1,64 +1,79 @@
 const API_ROOT = "http://localhost:8000";
 
-export async function getChatsByUserId(userId) {
-  const response = await fetch(`${API_ROOT}/chats/chatsByUserId/${userId}`);
+export function initMessengerApi(accessToken) {
+  const credentials = "include";
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  };
 
-  return response.json();
+  async function getChatsByUserId() {
+    const response = await fetch(`${API_ROOT}/chats`, {
+      credentials,
+      headers,
+    });
+
+    return response.json();
+  }
+
+  async function getUserByAlias(alias) {
+    const response = await fetch(`${API_ROOT}/users/${alias}`, {
+      credentials,
+      headers,
+    });
+
+    return response.json();
+  }
+
+  async function getUserbyPublicKey(publicKey) {
+    const response = await fetch(`${API_ROOT}/users/byPublicKey/${publicKey}`, {
+      credentials,
+      headers,
+    });
+
+    return response.json();
+  }
+
+  async function getMessagesInChat(alias) {
+    const response = await fetch(`${API_ROOT}/messages/${alias}`, {
+      credentials,
+      headers,
+    });
+
+    return response.json();
+  }
+
+  async function sendMessage(payload: {
+    toPublicKey: string;
+    message: string;
+  }) {
+    const response = await fetch(`${API_ROOT}/messages`, {
+      method: "POST",
+      credentials,
+      body: JSON.stringify(payload),
+      headers,
+    });
+
+    return response.json();
+  }
+
+  async function pollingSubscriber() {
+    const response = await fetch(`${API_ROOT}/messages/subscribe`, {
+      method: "POST",
+      credentials,
+      headers,
+    });
+
+    return response.json();
+  }
+
+  return {
+    getChatsByUserId,
+    getMessagesInChat,
+    sendMessage,
+    pollingSubscriber,
+    getUserByAlias,
+    getUserbyPublicKey,
+  };
 }
-
-export async function getMessagesInChat(userPublicKey) {
-  const response = await fetch(`${API_ROOT}/messages/${userPublicKey}`);
-
-  return response.json();
-}
-
-export async function sendMessage(payload: {
-  toPublicKey: string;
-  from: string;
-  message: string;
-}) {
-  const response = await fetch(`${API_ROOT}/messages`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-
-  return response.json();
-}
-
-export async function pollingSubscriber() {
-  const response = await fetch(`${API_ROOT}/messages/subscribe`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-
-  return response.json();
-}
-
-export async function pullNewMessages() {
-  const response = await fetch(`${API_ROOT}/messages/subscribe`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-
-  return response.json();
-}
-// export function initMessngerApi({ userId }) {
-//   async function getChatsByUserId() {
-//     const response = await fetch(`${API_ROOT}/chats/userId`);
-//     if (!response.ok) throw new Error();
-//     return response.json();
-//   }
-//   return {
-//     getChatsByUserId,
-//   };
-// }

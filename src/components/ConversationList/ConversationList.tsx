@@ -1,10 +1,10 @@
 import type { Component } from "solid-js";
 import { ConversationItem } from "@/components/ConversationItem";
-import { For } from "solid-js";
-
+import { NoChats } from "./NoChats";
+import { For, Show } from "solid-js";
 export const ConversationList: Component = (props) => {
   return (
-    <>
+    <Show when={props.chats().length > 0} fallback={<NoChats />}>
       <For each={props.chats()}>
         {({ user: { name, publicKey, alias }, lastMessage }, i) => (
           <ConversationItem
@@ -16,6 +16,6 @@ export const ConversationList: Component = (props) => {
           />
         )}
       </For>
-    </>
+    </Show>
   );
 };

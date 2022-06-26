@@ -16,7 +16,9 @@ export const ConversationItem = (props: {
         {props.name}
       </h5>
       <p class="font-normal text-14 text-gray-700 dark:text-gray-400">
-        {props.lastMessage}
+        {props.lastMessage
+          ? props.lastMessage
+          : "Type something to start chatting"}
       </p>
     </a>
   );

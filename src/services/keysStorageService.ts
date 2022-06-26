@@ -1,13 +1,18 @@
-function saveKeyPair(alias: string,payload: { publicKey: string, privateKey: string}) {
-  localStorage.setItem(alias, JSON.stringify(payload)) 
+function saveKeyPair(
+  alias: string,
+  payload: { publicKey: string; encryptedPrivateKey: string }
+) {
+  localStorage.setItem(alias, JSON.stringify(payload));
 }
 
-function getKeyPair(publicKey: string): { publicKey: string, privateKey: string} {
-  return JSON.parse(localStorage.getItem(publicKey)) 
+function getKeyPair(alias: string): {
+  publicKey: string;
+  encryptedPrivateKey: string;
+} {
+  return JSON.parse(localStorage.getItem(alias));
 }
-
 
 export const keysStorageService = {
   saveKeyPair,
-  getKeyPair
-}
+  getKeyPair,
+};

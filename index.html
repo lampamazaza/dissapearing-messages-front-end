@@ -3,13 +3,52 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <title>Solid App</title>
+    <meta name="theme-color" content="#1d4ed8" />
+    <title>Messenger</title>
+    <style>
+      .s {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: inline-block;
+      }
+      .s > div {
+        display: inline-block;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border-radius: 50%;
+        background: #1d4ed8;
+        animation: a 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+      }
+      @keyframes a {
+        0%,
+        100% {
+          animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+        }
+        0% {
+          transform: rotateY(0deg);
+        }
+        50% {
+          transform: rotateY(1800deg);
+          animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+        }
+        100% {
+          transform: rotateY(3600deg);
+        }
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-
+    <div id="root">
+      <div>
+        <div class="s">
+          <div></div>
+        </div>
+      </div>
+    </div>
     <script src="/src/index.tsx" type="module"></script>
   </body>
 </html>

@@ -28,7 +28,9 @@ export const ChatWindow = (props) => {
         <For each={props.messages()}>
           {({ text, sender, sentAt }) => {
             const isMine = props.currentCorrespondent().publicKey !== sender;
-            const name = isMine ? "a" : props.currentCorrespondent().user.name;
+            const name = isMine
+              ? props.currentUser().name
+              : props.currentCorrespondent().user.name;
             return <Message text={text} name={name} date={sentAt} />;
           }}
         </For>
