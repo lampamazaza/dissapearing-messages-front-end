@@ -1,20 +1,36 @@
+import { MessageInput } from "./MessageInput";
+
+const MESSAGE_FORM = "messageForm";
+
 export function ControlPanel(props) {
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const msg = (formData.get("message") as string).trim();
+    if (msg) {
+      await props.onSend(msg);
+      form.reset();
+    }
+  };
+
+  const onPressEnter = async () => {
+    try {
+      const form = document.getElementById(MESSAGE_FORM) as HTMLFormElement;
+      if (form) {
+        form.requestSubmit();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
-    <form
-      id="myForm"
-      onsubmit={(event) => {
-        event.preventDefault();
-        const form = event.target as HTMLFormElement;
-        const formData = new FormData(form);
-        props.onSend(formData.get("message"));
-        form.reset();
-      }}
-    >
+    <form id={MESSAGE_FORM} onsubmit={onSubmit}>
       <label for="chat" class="sr-only">
         Your message
       </label>
       <div class="flex items-center py-2 px-3 bg-gray-50 rounded-lg dark:bg-gray-700">
-        <button
+        {/* <button
           type="button"
           class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
         >
@@ -47,14 +63,8 @@ export function ControlPanel(props) {
               clip-rule="evenodd"
             ></path>
           </svg>
-        </button>
-        <textarea
-          id="message"
-          name="message"
-          rows="1"
-          class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Your message..."
-        ></textarea>
+        </button> */}
+        <MessageInput id="message" name="message" onSubmit={onPressEnter} />
         <button
           type="submit"
           class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"

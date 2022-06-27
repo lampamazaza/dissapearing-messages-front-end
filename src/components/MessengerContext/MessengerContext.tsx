@@ -1,11 +1,9 @@
 import {
-  createResource,
+  batch,
   createEffect,
   createContext,
   useContext,
   createSignal,
-  onMount,
-  batch,
 } from "solid-js";
 import { initMessengerApi } from "./api";
 import { getCurrentHashValue, normalizeByKey } from "./utils";
@@ -89,22 +87,24 @@ export function MessengerContextProvider(props) {
       for (let publicKey in data) {
         if (publicKey === activeChatPublicKey) {
           const messagesToAdd = data[activeChatPublicKey];
-          setMessages((value) => ({
-            ...value,
-            ...{
-              [activeChatPublicKey]:
-                value[activeChatPublicKey].concat(messagesToAdd),
-            },
-          }));
-          setChats((value) => {
-            return {
+          batch(() => {
+            setMessages((value) => ({
               ...value,
               ...{
-                [publicKey]: Object.assign({}, value[publicKey], {
-                  lastMessage: messagesToAdd.pop(),
-                }),
+                [activeChatPublicKey]:
+                  value[activeChatPublicKey].concat(messagesToAdd),
               },
-            };
+            }));
+            setChats((value) => {
+              return {
+                ...value,
+                ...{
+                  [publicKey]: Object.assign({}, value[publicKey], {
+                    lastMessage: messagesToAdd.pop(),
+                  }),
+                },
+              };
+            });
           });
         } else {
           if (!chats()[publicKey]) {
@@ -169,24 +169,25 @@ export function MessengerContextProvider(props) {
       toPublicKey,
       message: message,
     });
-    console.log(toPublicKey);
-    console.log(messages());
-    setMessages((value) => ({
-      ...value,
-      ...{
-        [toPublicKey]: value[toPublicKey].concat(result),
-      },
-    }));
 
-    setChats((value) => {
-      return {
+    batch(() => {
+      setMessages((value) => ({
         ...value,
         ...{
-          [toPublicKey]: Object.assign({}, value[toPublicKey], {
-            lastMessage: result,
-          }),
+          [toPublicKey]: value[toPublicKey].concat(result),
         },
-      };
+      }));
+
+      setChats((value) => {
+        return {
+          ...value,
+          ...{
+            [toPublicKey]: Object.assign({}, value[toPublicKey], {
+              lastMessage: result,
+            }),
+          },
+        };
+      });
     });
   }
 

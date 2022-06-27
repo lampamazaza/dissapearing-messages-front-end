@@ -54,7 +54,6 @@ export async function encodePrivateKey(privateKey, password) {
     )
   );
 
-  console.log(privateKey);
   const key = await window.crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
@@ -116,28 +115,6 @@ export async function decryptJwkKey(encryptedJwkKey, password) {
   return JSON.parse(decoder.decode(decrypted));
 }
 
-export async function decodePublicKey(portableBase64: string) {
-  const binaryPortableBase64Key = Uint8Array.from(
-    window.atob(portableBase64),
-    (c) => c.charCodeAt(0)
-  );
-
-  const { kty, crv, x, y, d, ext, key_ops } = JSON.parse(
-    new TextDecoder().decode(binaryPortableBase64Key)
-  );
-
-  return window.crypto.subtle.importKey(
-    "jwk", //can be "jwk" (public or private), "raw" (public only), "spki" (public only), or "pkcs8" (private only)
-    { kty, crv, x, y, ext, key_ops },
-    {
-      //these are the algorithm options
-      name: "ECDH",
-      namedCurve: "P-256", //can be "P-256", "P-384", or "P-521"
-    },
-    true, //whether the key is extractable (i.e. can be used in exportKey)
-    key_ops //"deriveKey" and/or "deriveBits" for private keys only (just put an empty list if importing a public key)
-  );
-}
 export async function decodePrivateKey(
   portableBase64PrivateKey: string,
   password

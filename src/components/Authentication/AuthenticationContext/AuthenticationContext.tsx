@@ -1,25 +1,40 @@
-import {
-  createResource,
-  createEffect,
-  createContext,
-  useContext,
-  createSignal,
-  onMount,
-  batch,
-} from "solid-js";
+import { createContext, useContext, createSignal } from "solid-js";
 import { createUser, getAuthenticationData, authenticate } from "./api";
 import { keysStorageService } from "@/services/keysStorageService";
 import {
   generateKeyPair,
   keyToPortable,
   encodePrivateKey,
-  decodePublicKey,
   decodePrivateKey,
   deriveBackEndKey,
   decryptBackEndMessage,
   deriveSecretKey,
 } from "@/services/cryptoServiceECDH";
-export const AuthenticationContext = createContext();
+import type { Signal, Accessor, Setter } from "solid-js";
+import { User } from "@/types/api";
+
+export const AuthenticationContext = createContext<{
+  createUser: ({
+    name,
+    alias,
+    password,
+  }: {
+    alias: string;
+    name: string;
+    password: string;
+  }) => Promise<User>;
+  authenticate: ({
+    alias,
+    password,
+  }: {
+    alias: string;
+    password: string;
+  }) => Promise<{
+    accessToken: string;
+    user: User;
+  }>;
+  accessToken: Accessor<string>;
+}>();
 
 export function AuthenticationContextProvider(props) {
   const [accessToken, setAccessToken] = createSignal(null);
@@ -29,10 +44,10 @@ export function AuthenticationContextProvider(props) {
     alias,
     password,
   }: {
-    name: string;
     alias: string;
+    name: string;
     password: string;
-  }) {
+  }): Promise<User> {
     const { publicKey, privateKey } = await generateKeyPair();
     const portableFormatPublicKey = await keyToPortable(publicKey);
     const createdUser = await createUser({
@@ -44,7 +59,7 @@ export function AuthenticationContextProvider(props) {
       publicKey: portableFormatPublicKey,
       encryptedPrivateKey: await encodePrivateKey(privateKey, password),
     });
-    return createdUser;
+    return createdUser as User;
   }
 
   async function tryAuthenticate({
