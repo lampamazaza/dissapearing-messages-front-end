@@ -62,7 +62,7 @@ export function initMessengerApi(accessToken) {
     const response = await fetch(`${API_ROOT}/messages/subscribe`, {
       method: "POST",
       credentials,
-      headers,
+      headers
     });
 
     return response.json();
