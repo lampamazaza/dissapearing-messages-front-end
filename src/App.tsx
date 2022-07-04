@@ -15,6 +15,7 @@ const App = () => {
         <Menu>
           <ConversationList
             chats={chats}
+            currentUser={currentUser}
             currentCorrespondent={currentCorrespondent}
           />
         </Menu>
