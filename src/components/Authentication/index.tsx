@@ -11,9 +11,7 @@ enum AUTH_STEPS {
   AUTHENTICATE,
 }
 
-export function Authentication() {
-  const { createUser, authenticate } = useAuthenctionContext();
-  const { currentUser, setCurrentUser } = useMessenger();
+export function Authentication(props) {
   const [step, setStep] = createSignal(AUTH_STEPS.INITIAL);
 
   const onCreateUser = async (newUserData: {
@@ -21,17 +19,15 @@ export function Authentication() {
     alias: string;
     password: string;
   }) => {
-    const createdUser = await createUser(newUserData);
-    await authenticate(newUserData);
-    setCurrentUser(createdUser);
+    await props.createUser(newUserData);
+    await props.authenticate(newUserData);
   };
 
   const onAuthenticate = async (payload: {
     alias: string;
     password: string;
   }) => {
-    const { user } = await authenticate(payload);
-    setCurrentUser(user);
+    await props.authenticate(payload);
   };
 
   const toAuth = () => setStep(AUTH_STEPS.AUTHENTICATE);

@@ -1,46 +1,42 @@
-const API_ROOT = "http://localhost:8000";
+import { ft } from "@/utils/ft";
 
-export function initMessengerApi(accessToken) {
-  const credentials = "include";
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  };
-
+export function initMessengerApi({ onAuthFail }) {
   async function getChatsByUserId() {
-    const response = await fetch(`${API_ROOT}/chats`, {
-      credentials,
-      headers,
-    });
+    const response = await ft("/chats");
+
+    if (response.status === 401) {
+      onAuthFail();
+      return;
+    }
 
     return response.json();
   }
 
   async function getUserByAlias(alias) {
-    const response = await fetch(`${API_ROOT}/users/${alias}`, {
-      credentials,
-      headers,
-    });
+    const response = await ft(`/users/${alias}`);
 
+    if (response.status === 401) {
+      onAuthFail();
+      return;
+    }
     return response.json();
   }
 
   async function getUserbyPublicKey(publicKey) {
-    const response = await fetch(`${API_ROOT}/users/byPublicKey/${publicKey}`, {
-      credentials,
-      headers,
-    });
-
+    const response = await ft(`/users/byPublicKey/${publicKey}`);
+    if (response.status === 401) {
+      onAuthFail();
+      return;
+    }
     return response.json();
   }
 
   async function getMessagesInChat(alias) {
-    const response = await fetch(`${API_ROOT}/messages/${alias}`, {
-      credentials,
-      headers,
-    });
-
+    const response = await ft(`/messages/${alias}`);
+    if (response.status === 401) {
+      onAuthFail();
+      return;
+    }
     return response.json();
   }
 
@@ -48,23 +44,25 @@ export function initMessengerApi(accessToken) {
     toPublicKey: string;
     message: string;
   }) {
-    const response = await fetch(`${API_ROOT}/messages`, {
+    const response = await ft("/messages", {
       method: "POST",
-      credentials,
       body: JSON.stringify(payload),
-      headers,
     });
-
+    if (response.status === 401) {
+      onAuthFail();
+      return;
+    }
     return response.json();
   }
 
   async function pollingSubscriber() {
-    const response = await fetch(`${API_ROOT}/messages/subscribe`, {
+    const response = await ft("/messages/subscribe", {
       method: "POST",
-      credentials,
-      headers
     });
-
+    if (response.status === 401) {
+      onAuthFail();
+      return;
+    }
     return response.json();
   }
 

@@ -29,7 +29,7 @@ export function ControlPanel(props) {
       <label for="chat" class="sr-only">
         Your message
       </label>
-      <div class="flex items-center py-2 px-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <div class="flex items-center p-10 bg-gray-50 rounded-lg dark:bg-gray-700">
         {/* <button
           type="button"
           class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
@@ -67,7 +67,7 @@ export function ControlPanel(props) {
         <MessageInput id="message" name="message" onSubmit={onPressEnter} />
         <button
           type="submit"
-          class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
+          class="inline-flex justify-center p-10 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
         >
           <svg
             class="w-6 h-6 rotate-90"

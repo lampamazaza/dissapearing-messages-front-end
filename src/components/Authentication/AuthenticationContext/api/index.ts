@@ -1,17 +1,13 @@
-const API_ROOT = "http://localhost:8000";
+import { ft } from "@/utils/ft";
 
 export async function createUser(payload: {
   name: string;
   alias: string;
   publicKey: string;
 }): Promise<{}> {
-  const response = await fetch(`${API_ROOT}/users`, {
+  const response = await ft("/users/auth", {
     method: "POST",
     body: JSON.stringify(payload),
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {
@@ -26,15 +22,7 @@ export async function getAuthenticationData(publicKey: string): Promise<{
   msg: Uint8Array;
   publicKey: Uint8Array;
 }> {
-  const response = await fetch(
-    `${API_ROOT}/users/authenticationData/${publicKey}`,
-    {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-    }
-  );
+  const response = await ft(`/users/auth/authenticationData/${publicKey}`);
 
   if (!response.ok) throw new Error("Failed to get authentication data");
 
@@ -49,17 +37,31 @@ export async function getAuthenticationData(publicKey: string): Promise<{
 export async function authenticate(
   decryptedMsg: Uint8Array,
   publicKey: string
-): Promise<{ accessToken: string; user: any }> {
-  const response = await fetch(`${API_ROOT}/users/authenticate`, {
+): Promise<{ user: any }> {
+  const response = await ft("/users/auth/authenticate", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
     body: JSON.stringify({ decryptedMsg: Array.from(decryptedMsg), publicKey }),
   });
 
   if (!response.ok) throw new Error("Failed to get authenticate");
 
   return response.json();
+}
+
+export async function login() {
+  const response = await ft("/users/auth/login");
+
+  if (response.status === 401) {
+    throw new Error("Failed to login");
+  }
+
+  return response.json();
+}
+
+export async function logout() {
+  const response = await ft("/users/auth/logout", { method: "POST" });
+
+  if (!response.ok) {
+    throw new Error("Failed to logout");
+  }
 }

@@ -21,15 +21,15 @@ export function AuthenticatePanel({
   };
 
   return (
-    <div class="bg-chat flex flex-col justify-center items-center w-screen	 h-screen p-8">
+    <div class="bg-chat flex flex-col justify-center items-center w-screen	 h-screen p-9">
       <form
         onSubmit={onSubmit}
         class="flex flex-col w-full max-w-[400px]  justify-center  p-6 bg-white rounded-lg border border-gray-200 shadow-md  dark:bg-gray-800 dark:border-gray-700"
       >
-        <span class="text-[20px] whitespace-nowrap text-center leading-5 font-bold">
+        <span class="text-20 whitespace-nowrap text-center leading-5 font-bold">
           Authentication
         </span>
-        <div class="flex flex-col mt-4 gap-2">
+        <div class="flex flex-col mt-8 gap-8">
           <div>
             <label
               for="alias"
@@ -62,7 +62,7 @@ export function AuthenticatePanel({
           </div>
           <button
             type="submit"
-            class="mt-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            class="mt-8 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Authenticate
           </button>

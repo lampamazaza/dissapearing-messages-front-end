@@ -24,7 +24,7 @@ export const ConversationList: Component = (props) => {
   };
 
   return (
-    <div>
+    <div class="h-screen pb-32">
       <Show when={props.chats().length > 0} fallback={<NoChats />}>
         <For each={props.chats()}>
           {({ user: { name, publicKey, alias }, lastMessage }, i) => (
@@ -38,12 +38,13 @@ export const ConversationList: Component = (props) => {
           )}
         </For>
       </Show>
-      <div class="flex justify-center p-8 absolute bottom-0 left-0 right-0">
+      <div class="flex justify-center p-8 absolute bottom-0 left-0 right-0 gap-8 flex-col">
         <Button onClick={share}>
           {isMobile() && window.navigator.share
             ? "Share chat link"
             : "Copy chat link"}
         </Button>
+        <Button onClick={props.logout}>Logout</Button>
       </div>
     </div>
   );

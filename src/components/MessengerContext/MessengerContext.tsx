@@ -5,17 +5,17 @@ import {
   useContext,
   createSignal,
 } from "solid-js";
+import { useAuthenctionContext } from "../Authentication/AuthenticationContext/AuthenticationContext";
 import { initMessengerApi } from "./api";
 import { getCurrentHashValue, normalizeByKey } from "./utils";
-import { useAuthenctionContext } from "@/components/Authentication/AuthenticationContext/AuthenticationContext";
 
 export const MessengerContext = createContext();
 
-let api = null;
-
 export function MessengerContextProvider(props) {
-  const { accessToken } = useAuthenctionContext();
-  const [currentUser, setCurrentUser] = createSignal(null);
+  const { currentUser, resetOnAuthTokenExpired } = useAuthenctionContext();
+  const api = initMessengerApi({
+    onAuthFail: () => resetOnAuthTokenExpired(),
+  });
 
   const [
     currentOpenedCorrespondentPublicKey,
@@ -33,10 +33,9 @@ export function MessengerContextProvider(props) {
 
   const init = async () => {
     if (!isInited()) {
-      api = initMessengerApi(accessToken());
       const alias = new URLSearchParams(window.location.search).get("m");
       //init
-      const chats = await api.getChatsByUserId(currentUser().publicKey);
+      const chats = await api.getChatsByUserId();
       let currentChatMessages = [];
       let correspondentPublicKey = "";
       if (alias) {
@@ -75,7 +74,7 @@ export function MessengerContextProvider(props) {
   };
 
   createEffect(async () => {
-    if (currentUser() !== null && accessToken() !== null) {
+    if (currentUser() !== null) {
       init();
     }
   });
@@ -199,8 +198,6 @@ export function MessengerContextProvider(props) {
         currentCorrespondent: () =>
           chats()[currentOpenedCorrespondentPublicKey()],
         sendMessage: send,
-        currentUser,
-        setCurrentUser,
       }}
     >
       {props.children}

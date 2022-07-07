@@ -1,5 +1,17 @@
-import { createContext, useContext, createSignal } from "solid-js";
-import { createUser, getAuthenticationData, authenticate } from "./api";
+import {
+  createContext,
+  useContext,
+  createSignal,
+  onMount,
+  batch,
+} from "solid-js";
+import {
+  createUser,
+  getAuthenticationData,
+  authenticate,
+  login,
+  logout,
+} from "./api";
 import { keysStorageService } from "@/services/keysStorageService";
 import {
   generateKeyPair,
@@ -10,8 +22,9 @@ import {
   decryptBackEndMessage,
   deriveSecretKey,
 } from "@/services/cryptoServiceECDH";
-import type { Signal, Accessor, Setter } from "solid-js";
+import type { Accessor, Setter } from "solid-js";
 import { User } from "@/types/api";
+import baton from "@/services/baton";
 
 export const AuthenticationContext = createContext<{
   createUser: ({
@@ -30,15 +43,33 @@ export const AuthenticationContext = createContext<{
     alias: string;
     password: string;
   }) => Promise<{
-    accessToken: string;
     user: User;
   }>;
-  accessToken: Accessor<string>;
+  logout: () => Promise<void>;
+  resetOnAuthTokenExpired: () => void;
+  setCurrentUser: Setter<{
+    alias: string;
+    name: string;
+    password: string;
+  } | null>;
+  currentUser: Accessor<{
+    alias: string;
+    name: string;
+    password: string;
+  } | null>;
+  status: Accessor<AUTH_STATUS>;
 }>();
 
-export function AuthenticationContextProvider(props) {
-  const [accessToken, setAccessToken] = createSignal(null);
+export enum AUTH_STATUS {
+  TRYING_TO_AUTHENTICATE,
+  AUTHENTICATED,
+  NON_AUTHENTICATED,
+}
 
+export function AuthenticationContextProvider(props) {
+  const [currentUser, setCurrentUser] = createSignal(null);
+  const [authenticationStatus, setAuthenticationStatus] =
+    createSignal<AUTH_STATUS>(AUTH_STATUS.TRYING_TO_AUTHENTICATE);
   async function tryCreateUser({
     name,
     alias,
@@ -62,6 +93,23 @@ export function AuthenticationContextProvider(props) {
     return createdUser as User;
   }
 
+  onMount(async () => {
+    try {
+      const user = await login();
+      if (user) {
+        batch(() => {
+          setCurrentUser(user);
+          setAuthenticationStatus(AUTH_STATUS.AUTHENTICATED);
+        });
+      } else {
+        setAuthenticationStatus(AUTH_STATUS.NON_AUTHENTICATED);
+      }
+    } catch (error) {
+      console.error(error.message);
+      setAuthenticationStatus(AUTH_STATUS.NON_AUTHENTICATED);
+    }
+  });
+
   async function tryAuthenticate({
     alias,
     password,
@@ -69,8 +117,6 @@ export function AuthenticationContextProvider(props) {
     alias: string;
     password: string;
   }) {
-    const existingToken = accessToken();
-    if (existingToken) return existingToken;
     // get keypair from localstorage
     const { publicKey, encryptedPrivateKey } =
       keysStorageService.getKeyPair(alias);
@@ -93,26 +139,45 @@ export function AuthenticationContextProvider(props) {
     // decrypt msg
     const decryptedMsg = await decryptBackEndMessage(mySharedSecret, msg, iv);
     // // ask BackEnd to check if msg is the same as it was encrypted
-    const { accessToken: freshToken, user } = await authenticate(
-      decryptedMsg,
-      publicKey
-    );
-    // if is authed back end returs jwt accesstoken
-    if (freshToken) {
-      setAccessToken(freshToken);
-    }
+    const { user } = await authenticate(decryptedMsg, publicKey);
+
+    setCurrentUser(user);
     return {
-      accessToken: freshToken,
       user,
     };
   }
+
+  const trylogout = async () => {
+    try {
+      await logout();
+      batch(() => {
+        setCurrentUser(null);
+        setAuthenticationStatus(AUTH_STATUS.NON_AUTHENTICATED);
+      });
+    } catch (error) {
+      console.error(error);
+      baton.error(error.message);
+    }
+  };
+
+  const resetOnAuthTokenExpired = async () => {
+    batch(() => {
+      setCurrentUser(null);
+      setAuthenticationStatus(AUTH_STATUS.NON_AUTHENTICATED);
+    });
+    baton.error("Please relogin again");
+  };
 
   return (
     <AuthenticationContext.Provider
       value={{
         createUser: tryCreateUser,
         authenticate: tryAuthenticate,
-        accessToken,
+        setCurrentUser,
+        currentUser,
+        status: authenticationStatus,
+        logout: trylogout,
+        resetOnAuthTokenExpired,
       }}
     >
       {props.children}
