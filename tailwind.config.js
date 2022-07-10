@@ -8,9 +8,15 @@ module.exports = {
     extend: {
       gridTemplateColumns: {
         desktop: "300px 1fr",
+        "modile-menu-opened": "1fr 0px",
+        "modile-chat-opened": "0px 1fr"
       },
       gridTemplateRows: {
         desktop: "100vh",
+        mobile: "100vh 100vh"
+      },
+      screens: {
+        d: "1200px",
       },
       spacing: {
         2: "2px",

@@ -31,16 +31,28 @@ const App = () => {
         </Show>
       }
     >
-      <div class="grid grid-cols-desktop grid-rows-desktop">
-        <Menu>
-          <ConversationList
-            chats={chats}
-            currentUser={currentUser}
-            currentCorrespondent={currentCorrespondent}
-            logout={logout}
-          />
-        </Menu>
-        <div class="bg-chat">
+      <div
+        class={`grid h-screen overflow-hidden grid-rows-mobile d:grid-cols-desktop  d:grid-rows-desktop`}
+      >
+        <div
+          class={`${
+            currentCorrespondent() ? "order-2" : "order-1"
+          } d:order-none`}
+        >
+          <Menu>
+            <ConversationList
+              chats={chats}
+              currentUser={currentUser}
+              currentCorrespondent={currentCorrespondent}
+              logout={logout}
+            />
+          </Menu>
+        </div>
+        <div
+          class={`bg-chat ${
+            currentCorrespondent() ? "order-1" : "order-2"
+          } d:order-none`}
+        >
           {currentCorrespondent() && (
             <ChatWindow
               messages={messages}
