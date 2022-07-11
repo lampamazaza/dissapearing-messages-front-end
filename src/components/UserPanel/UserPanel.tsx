@@ -4,7 +4,7 @@ export function UserPanel(props: { name: string }) {
       <div class="d:hidden mr-20">
         <a href="#">🔙</a>
       </div>
-      <div>{props.name}</div>
+      <div class="max-w-[80%] truncate">{props.name}</div>
     </div>
   );
 }

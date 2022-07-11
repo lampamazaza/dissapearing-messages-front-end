@@ -5,7 +5,7 @@ export async function createUser(payload: {
   alias: string;
   publicKey: string;
 }): Promise<{}> {
-  const response = await ft("/users/auth", {
+  const response = await ft("/users", {
     method: "POST",
     body: JSON.stringify(payload),
   });

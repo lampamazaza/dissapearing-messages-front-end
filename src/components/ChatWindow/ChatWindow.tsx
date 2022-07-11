@@ -31,7 +31,7 @@ export const ChatWindow = (props) => {
             const name = isMine
               ? props.currentUser().name
               : props.currentCorrespondent().user.name;
-            return <Message text={text} name={name} date={sentAt} />;
+            return <Message text={text} name={name} date={sentAt} isMine={isMine} />;
           }}
         </For>
       </div>

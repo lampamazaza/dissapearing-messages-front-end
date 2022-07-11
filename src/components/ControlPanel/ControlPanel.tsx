@@ -64,7 +64,7 @@ export function ControlPanel(props) {
             ></path>
           </svg>
         </button> */}
-        <MessageInput id="message" name="message" onSubmit={onPressEnter} />
+        <MessageInput id="message" name="message" onSubmit={onPressEnter} maxLength={500} required={true}  />
         <button
           type="submit"
           class="inline-flex justify-center p-10 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"

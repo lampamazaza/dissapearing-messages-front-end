@@ -1,9 +1,11 @@
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 
 export function MessageInput(props: {
   onSubmit: (event: any) => Promise<void>;
   id: string;
   name: string;
+  maxLength: number;
+  required: boolean;
 }) {
   const [rows, setRows] = createSignal(1);
 
@@ -42,7 +44,9 @@ export function MessageInput(props: {
       id={props.id}
       name={props.name}
       rows={rows()}
+      maxLength={props.maxLength}
       onInput={handleChange}
+      required={props.required}
       onKeyPress={onKeyPress}
       class="block resize-none mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       placeholder="Your message..."
