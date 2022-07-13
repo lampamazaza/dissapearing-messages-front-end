@@ -49,7 +49,7 @@ const App = () => {
           </Menu>
         </div>
         <div
-          class={`bg-chat ${
+          class={`${
             currentCorrespondent() ? "order-1" : "order-2"
           } d:order-none`}
         >

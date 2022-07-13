@@ -27,12 +27,12 @@ export function CreateAccount({
   };
 
   return (
-    <div class="bg-chat flex flex-col justify-center items-center w-screen	 h-screen p-9">
+    <div class="flex flex-col justify-center items-center w-screen	 h-screen p-9">
       <form
         onSubmit={onSubmit}
         class="flex flex-col w-full max-w-[400px]  justify-center  p-6 bg-white rounded-lg border border-gray-200 shadow-md  dark:bg-gray-800 dark:border-gray-700"
       >
-        <span class="text-20 whitespace-nowrap text-center leading-5 font-bold">
+        <span class="text-20 whitespace-nowrap text-center font-bold">
           Create account
         </span>
         <div class="flex flex-col mt-4 gap-8">
