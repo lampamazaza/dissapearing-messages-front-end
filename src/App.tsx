@@ -32,7 +32,7 @@ const App = () => {
       }
     >
       <div
-        class={`grid h-screen overflow-hidden grid-cols-1 grid-rows-mobile d:grid-cols-desktop  d:grid-rows-desktop`}
+        class={`grid h-screen overflow-hidden grid-cols-1 grid-rows-mobile d:grid-cols-desktop d:grid-rows-desktop`}
       >
         <div
           class={`${

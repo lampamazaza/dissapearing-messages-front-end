@@ -8,7 +8,7 @@ export const ConversationItem = (props: {
   return (
     <a
       href={`#${props.publicKey}`}
-      class={`flex flex-col cursor-pointer p-20  ${
+      class={`flex flex-col cursor-pointer p-20 ${
         props.isActive ? "bg-gray-100" : "bg-white"
       } dark:bg-gray-800 dark:hover:bg-gray-700`}
     >
