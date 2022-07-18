@@ -31,6 +31,17 @@ export function MessengerContextProvider(props) {
   const [messages, setMessages] = createSignal({});
   const [isInited, setIsInited] = createSignal(false);
 
+
+
+  async function resetData() {
+    batch(() => {
+      setChats([]);
+      setMessages({})
+      setIsInited(false);
+      window.location.hash = "#"
+    })
+  }
+
   const init = async () => {
     if (!isInited()) {
       const alias = new URLSearchParams(window.location.search).get("m");
@@ -139,7 +150,9 @@ export function MessengerContextProvider(props) {
     } catch (error) {
       console.error(error);
     } finally {
-      setTimeout(() => startPolling(), 2000);
+      if(currentUser() !== null && isInited()){
+        setTimeout(() => startPolling(), 2000);
+      }
     }
   }
 
@@ -198,6 +211,7 @@ export function MessengerContextProvider(props) {
         currentCorrespondent: () =>
           chats()[currentOpenedCorrespondentPublicKey()],
         sendMessage: send,
+        resetData
       }}
     >
       {props.children}

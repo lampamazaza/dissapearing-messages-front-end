@@ -11,9 +11,15 @@ import {
 import { Spinner } from "./components/Spinner";
 
 const App = () => {
-  const { chats, messages, sendMessage, currentCorrespondent } = useMessenger();
+  const { chats, messages, sendMessage, currentCorrespondent, resetData } = useMessenger();
   const { currentUser, authenticate, createUser, status, logout } =
     useAuthenctionContext();
+
+
+  function onLogout() {
+    logout()
+    resetData()
+  }  
 
   return (
     <Show
@@ -44,7 +50,7 @@ const App = () => {
               chats={chats}
               currentUser={currentUser}
               currentCorrespondent={currentCorrespondent}
-              logout={logout}
+              logout={onLogout}
             />
           </Menu>
         </div>
