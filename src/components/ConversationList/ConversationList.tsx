@@ -10,7 +10,7 @@ import { shareNative } from "@/utils/shareNative";
 
 export const ConversationList: Component = (props) => {
   const share = async () => {
-    const link = window.location.href + "?m=" + props.currentUser().alias;
+    const link = window.location.host + "/?m=" + props.currentUser().alias;
     if (isMobile() && window.navigator.share) {
       try {
         shareNative("Click to start chatting", link);

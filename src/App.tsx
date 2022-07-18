@@ -1,7 +1,3 @@
-import { ConversationList } from "@/components/ConversationList";
-import { Menu } from "@/components/Menu";
-import { ChatWindow } from "@/components/ChatWindow";
-import { useMessenger } from "@/components/MessengerContext";
 import { Show } from "solid-js";
 import { Authentication } from "@/components/Authentication";
 import {
@@ -9,17 +5,12 @@ import {
   AUTH_STATUS,
 } from "./components/Authentication/AuthenticationContext/AuthenticationContext";
 import { Spinner } from "./components/Spinner";
+import { Messenger } from "./components/Messenger";
+import { MessengerContextProvider } from "./components/MessengerContext/MessengerContext";
 
 const App = () => {
-  const { chats, messages, sendMessage, currentCorrespondent, resetData } = useMessenger();
-  const { currentUser, authenticate, createUser, status, logout } =
+  const { currentUser, authenticate, createUser, status, resetOnAuthTokenExpired } =
     useAuthenctionContext();
-
-
-  function onLogout() {
-    logout()
-    resetData()
-  }  
 
   return (
     <Show
@@ -37,38 +28,9 @@ const App = () => {
         </Show>
       }
     >
-      <div
-        class={`grid h-screen overflow-hidden grid-cols-1 grid-rows-mobile d:grid-cols-desktop d:grid-rows-desktop`}
-      >
-        <div
-          class={`${
-            currentCorrespondent() ? "order-2" : "order-1"
-          } d:order-none`}
-        >
-          <Menu>
-            <ConversationList
-              chats={chats}
-              currentUser={currentUser}
-              currentCorrespondent={currentCorrespondent}
-              logout={onLogout}
-            />
-          </Menu>
-        </div>
-        <div
-          class={`${
-            currentCorrespondent() ? "order-1" : "order-2"
-          } d:order-none`}
-        >
-          {currentCorrespondent() && (
-            <ChatWindow
-              messages={messages}
-              currentCorrespondent={currentCorrespondent}
-              currentUser={currentUser}
-              sendMessage={sendMessage}
-            />
-          )}
-        </div>
-      </div>
+     <MessengerContextProvider currentUser={currentUser} resetOnAuthTokenExpired={resetOnAuthTokenExpired} >
+        <Messenger />
+      </MessengerContextProvider>
     </Show>
   );
 };

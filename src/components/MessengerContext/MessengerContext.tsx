@@ -5,14 +5,15 @@ import {
   useContext,
   createSignal,
 } from "solid-js";
-import { useAuthenctionContext } from "../Authentication/AuthenticationContext/AuthenticationContext";
 import { initMessengerApi } from "./api";
 import { getCurrentHashValue, normalizeByKey } from "./utils";
 
 export const MessengerContext = createContext();
 
 export function MessengerContextProvider(props) {
-  const { currentUser, resetOnAuthTokenExpired } = useAuthenctionContext();
+  const currentUser = props.currentUser;
+  const resetOnAuthTokenExpired = props.resetOnAuthTokenExpired;
+
   const api = initMessengerApi({
     onAuthFail: () => resetOnAuthTokenExpired(),
   });
@@ -30,17 +31,6 @@ export function MessengerContextProvider(props) {
   const [chats, setChats] = createSignal([]);
   const [messages, setMessages] = createSignal({});
   const [isInited, setIsInited] = createSignal(false);
-
-
-
-  async function resetData() {
-    batch(() => {
-      setChats([]);
-      setMessages({})
-      setIsInited(false);
-      window.location.hash = "#"
-    })
-  }
 
   const init = async () => {
     if (!isInited()) {
@@ -210,8 +200,7 @@ export function MessengerContextProvider(props) {
         messages: () => messages()[currentOpenedCorrespondentPublicKey()],
         currentCorrespondent: () =>
           chats()[currentOpenedCorrespondentPublicKey()],
-        sendMessage: send,
-        resetData
+        sendMessage: send
       }}
     >
       {props.children}
