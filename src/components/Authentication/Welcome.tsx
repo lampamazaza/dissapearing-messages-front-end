@@ -1,5 +1,3 @@
-import baton from "@/services/baton";
-
 export function Welcome({
   toAuth,
   toCreateAccount,
