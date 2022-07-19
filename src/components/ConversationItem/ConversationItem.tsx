@@ -15,7 +15,7 @@ export const ConversationItem = (props: {
       <h5 class="text-20 font-bold tracking-tight text-gray-900 max-w-[80%] truncate">
         {props.name}
       </h5>
-      <p class="font-normal text-14 text-gray-700 max-w-[80%] truncate">
+      <p class="text-14 text-gray-700 max-w-[80%] truncate">
         {props.lastMessage
           ? props.lastMessage
           : "Type something to start chatting"}
