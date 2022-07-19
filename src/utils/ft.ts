@@ -1,12 +1,14 @@
+const JSON_TYPE= "application/json"
+
 const DEFAULT_OPTIONS = {
   credentials: "include" as RequestCredentials,
   headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
+    Accept: JSON_TYPE,
+    "Content-Type": JSON_TYPE,
   },
 };
 
-const API_ROOT = "http://localhost:8000/api";
+const API_ROOT = import.meta.env.VITE_API_ROOT;
 
 export async function ft(url: string, options?: RequestInit) {
   return fetch(
