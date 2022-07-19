@@ -23,7 +23,7 @@ export const ChatWindow = (props) => {
         style={{
           height: "calc(100vh - 140px)",
         }}
-        class="flex flex-1 flex-col overflow-scroll bg-white  border-gray-200 dark:bg-gray-800 dark:border-gray-700 p-20 scrollbar-hide"
+        class="flex flex-1 flex-col overflow-scroll bg-white  border-gray-200 p-20 scrollbar-hide"
       >
         <For each={props.messages()}>
           {({ text, sender, sentAt }) => {
