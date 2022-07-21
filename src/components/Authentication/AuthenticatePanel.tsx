@@ -16,7 +16,7 @@ export function AuthenticatePanel({
         password: formData.get("password") as string,
       });
     } catch (error) {
-      baton.error(error.message);
+      baton.error(error.message || "Failed to authenticate");
     }
   };
 

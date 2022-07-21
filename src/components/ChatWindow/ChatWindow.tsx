@@ -1,14 +1,16 @@
 import { Message } from "@/components/Message";
 import { ControlPanel } from "@/components/ControlPanel";
 import { UserPanel } from "@/components/UserPanel";
-import { For, createSignal, createEffect, on } from "solid-js";
+import { For, createEffect, on } from "solid-js";
+
+const dialogueContainer = "w"
 
 export const ChatWindow = (props) => {
   createEffect(
     on(
       props.messages,
       () => {
-        const element = document.getElementById("test");
+        const element = document.getElementById(dialogueContainer);
         if (element) element.scrollTop = element.scrollHeight;
       },
       { defer: true }
@@ -16,14 +18,14 @@ export const ChatWindow = (props) => {
   );
 
   return (
-    <div class="flex flex-col h-[100vh]">
+    <div class="flex flex-col h-screen">
       <UserPanel name={props.currentCorrespondent().user.name} />
       <div
-        id="test"
+        id={dialogueContainer}
         style={{
           height: "calc(100vh - 140px)",
         }}
-        class="flex flex-1 flex-col overflow-scroll bg-white  border-gray-200 p-20 scrollbar-hide"
+        class="bg-main flex flex-1 flex-col overflow-scroll bg-white  border-gray-200 p-20 scrollbar-hide"
       >
         <For each={props.messages()}>
           {({ text, sender, sentAt }) => {

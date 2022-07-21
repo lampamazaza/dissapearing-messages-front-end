@@ -22,7 +22,7 @@ export function CreateAccount({
         password: formData.get("password") as string,
       });
     } catch (error) {
-      baton.error(error.message);
+      baton.error(error.message || "Failed to create account");
     }
   };
 

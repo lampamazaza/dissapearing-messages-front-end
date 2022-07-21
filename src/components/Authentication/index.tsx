@@ -35,16 +35,18 @@ export function Authentication(props) {
   const toWelcome = () => setStep(AUTH_STEPS.INITIAL);
 
   return (
-    <Switch>
-      <Match when={step() === AUTH_STEPS.INITIAL}>
-        <Welcome toAuth={toAuth} toCreateAccount={toCreateAccount} />
-      </Match>
-      <Match when={step() === AUTH_STEPS.CREATE_ACCOUNT}>
-        <CreateAccount createUser={onCreateUser} back={toWelcome} />
-      </Match>
-      <Match when={step() === AUTH_STEPS.AUTHENTICATE}>
-        <AuthenticatePanel back={toWelcome} authenticate={onAuthenticate} />
-      </Match>
-    </Switch>
+    <div class="bg-main">
+      <Switch>
+        <Match when={step() === AUTH_STEPS.INITIAL}>
+          <Welcome toAuth={toAuth} toCreateAccount={toCreateAccount} />
+        </Match>
+        <Match when={step() === AUTH_STEPS.CREATE_ACCOUNT}>
+          <CreateAccount createUser={onCreateUser} back={toWelcome} />
+        </Match>
+        <Match when={step() === AUTH_STEPS.AUTHENTICATE}>
+          <AuthenticatePanel back={toWelcome} authenticate={onAuthenticate} />
+        </Match>
+      </Switch>
+    </div>
   );
 }

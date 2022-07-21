@@ -14,6 +14,9 @@ module.exports = {
         desktop: "100vh",
         mobile: "100vh 100vh"
       },
+      backgroundImage: {
+        main: `url("/bg.svg");`
+      },
       screens: {
         d: "1200px",
       },
