@@ -12,7 +12,7 @@ export async function createUser(payload: {
 
   if (!response.ok) {
     const json = await response.json();
-    throw new Error(json.message);
+    throw new Error(json.message || "Failed to create User");
   }
 
   return response.json();
@@ -24,10 +24,12 @@ export async function getAuthenticationData(publicKey: string): Promise<{
 }> {
   const response = await ft(`/users/auth/authenticationData/${publicKey}`);
 
-  if (!response.ok) throw new Error("Failed to get authentication data");
+  if (!response.ok) {
+    const json = await response.json();
+    throw new Error(json.message || "Failed to get authentication data");
+  }
 
   const json = await response.json();
-
   for (let key in json) {
     json[key] = Uint8Array.from(json[key]);
   }
@@ -43,7 +45,10 @@ export async function authenticate(
     body: JSON.stringify({ decryptedMsg: Array.from(decryptedMsg), publicKey }),
   });
 
-  if (!response.ok) throw new Error("Failed to get authenticate");
+  if (!response.ok) {
+    const json = await response.json();
+    throw new Error(json.message || "Failed to get authenticated");
+  }
 
   return response.json();
 }

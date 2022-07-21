@@ -16,7 +16,7 @@ export function AuthenticatePanel({
         password: formData.get("password") as string,
       });
     } catch (error) {
-      baton.error("Failed to create account");
+      baton.error(error.message);
     }
   };
 

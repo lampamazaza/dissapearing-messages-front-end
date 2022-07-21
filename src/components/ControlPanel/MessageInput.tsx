@@ -1,9 +1,11 @@
-import { createEffect, createSignal } from "solid-js";
+import { Accessor, createEffect, createSignal, Setter } from "solid-js";
 
 export function MessageInput(props: {
   onSubmit: (event: any) => Promise<void>;
   id: string;
   name: string;
+  value: Accessor<string>
+  setValue: Setter<string>
   maxLength: number;
   required: boolean;
 }) {
@@ -29,6 +31,7 @@ export function MessageInput(props: {
     }
 
     setRows(currentRows < maxRows ? currentRows : maxRows);
+    props.setValue(event.currentTarget.value)
   };
 
   const onKeyPress = (event) => {
@@ -39,11 +42,18 @@ export function MessageInput(props: {
     }
   };
 
+  createEffect(() => {
+    if (props.value() === "") {
+      setRows(1)
+    }
+  })
+
   return (
     <textarea
       id={props.id}
       name={props.name}
       rows={rows()}
+      value={props.value()}
       maxLength={props.maxLength}
       onInput={handleChange}
       required={props.required}
