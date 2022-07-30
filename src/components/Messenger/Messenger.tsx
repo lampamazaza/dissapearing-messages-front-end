@@ -5,46 +5,45 @@ import { useMessenger } from "@/components/MessengerContext";
 import {
   useAuthenctionContext,
 } from "../Authentication/AuthenticationContext/AuthenticationContext";
+import { Accessor, Component } from "solid-js";
 
-export const Messenger = () => {
+export const Messenger: Component = () => {
   const { chats, messages, sendMessage, currentCorrespondent } = useMessenger();
   const { currentUser, logout } =
     useAuthenctionContext();
 
   return (
 
+    <div
+      class={`grid h-screen overflow-hidden grid-cols-1 grid-rows-mobile d:grid-cols-desktop d:grid-rows-desktop`}
+    >
       <div
-        class={`grid h-screen overflow-hidden grid-cols-1 grid-rows-mobile d:grid-cols-desktop d:grid-rows-desktop`}
+        class={`${currentCorrespondent() ? "order-2" : "order-1"
+          } d:order-none`}
       >
-        <div
-          class={`${
-            currentCorrespondent() ? "order-2" : "order-1"
-          } d:order-none`}
-        >
-          <Menu>
-            <ConversationList
-              chats={chats}
-              currentUser={currentUser}
-              currentCorrespondent={currentCorrespondent}
-              logout={logout}
-            />
-          </Menu>
-        </div>
-        <div
-          class={`${
-            currentCorrespondent() ? "order-1" : "order-2"
-          } d:order-none`}
-        >
-          {currentCorrespondent() && (
-            <ChatWindow
-              messages={messages}
-              currentCorrespondent={currentCorrespondent}
-              currentUser={currentUser}
-              sendMessage={sendMessage}
-            />
-          )}
-        </div>
+        <Menu>
+          <ConversationList
+            chats={chats}
+            currentUser={currentUser}
+            currentCorrespondent={currentCorrespondent}
+            logout={logout}
+          />
+        </Menu>
       </div>
+      <div
+        class={`${currentCorrespondent() ? "order-1" : "order-2"
+          } d:order-none`}
+      >
+        {currentCorrespondent() && (
+          <ChatWindow
+            messages={messages}
+            currentCorrespondent={currentCorrespondent}
+            currentUser={currentUser}
+            sendMessage={sendMessage}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 

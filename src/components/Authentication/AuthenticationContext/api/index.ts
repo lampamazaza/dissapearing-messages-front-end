@@ -1,5 +1,5 @@
 import { ft } from "@/utils/ft";
-
+import { User } from "@/types/api";
 export async function createUser(payload: {
   name: string;
   alias: string;
@@ -39,7 +39,7 @@ export async function getAuthenticationData(publicKey: string): Promise<{
 export async function authenticate(
   decryptedMsg: Uint8Array,
   publicKey: string
-): Promise<{ user: any }> {
+): Promise<{ user: User }> {
   const response = await ft("/users/auth/authenticate", {
     method: "POST",
     body: JSON.stringify({ decryptedMsg: Array.from(decryptedMsg), publicKey }),

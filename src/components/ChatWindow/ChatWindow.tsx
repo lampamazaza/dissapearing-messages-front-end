@@ -1,11 +1,12 @@
-import { Message } from "@/components/Message";
+import { Message as MessageComponent } from "@/components/Message";
 import { ControlPanel } from "@/components/ControlPanel";
 import { UserPanel } from "@/components/UserPanel";
 import { For, createEffect, on } from "solid-js";
-
+import { Chat, User, Message } from "@/types/api";
+import type { Accessor, Component } from "solid-js";
 const dialogueContainer = "w"
 
-export const ChatWindow = (props) => {
+export const ChatWindow: Component<{ currentUser: Accessor<User>, messages: Accessor<Message[]>, currentCorrespondent: Accessor<Chat>, sendMessage: (message: string) => Promise<void> }> = (props) => {
   createEffect(
     on(
       props.messages,
@@ -33,7 +34,7 @@ export const ChatWindow = (props) => {
             const name = isMine
               ? props.currentUser().name
               : props.currentCorrespondent().user.name;
-            return <Message text={text} name={name} date={sentAt} isMine={isMine} />;
+            return <MessageComponent text={text} name={name} date={sentAt} isMine={isMine} />;
           }}
         </For>
       </div>

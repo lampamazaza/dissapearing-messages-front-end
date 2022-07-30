@@ -52,11 +52,7 @@ export const AuthenticationContext = createContext<{
     name: string;
     password: string;
   } | null>;
-  currentUser: Accessor<{
-    alias: string;
-    name: string;
-    password: string;
-  } | null>;
+  currentUser: Accessor<User | null>;
   status: Accessor<AUTH_STATUS>;
 }>();
 

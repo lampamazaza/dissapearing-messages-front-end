@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import type { Accessor, Component } from "solid-js";
 import { ConversationItem } from "@/components/ConversationItem";
 import { Button } from "@/components/Button";
 import { NoChats } from "./NoChats";
@@ -7,8 +7,9 @@ import baton from "@/services/baton";
 import { copyToClipboard } from "@/utils/copyToClipboard";
 import { isMobile } from "@/utils/isMobile";
 import { shareNative } from "@/utils/shareNative";
+import { Chat, User } from "@/types/api";
 
-export const ConversationList: Component = (props) => {
+export const ConversationList: Component<{ currentUser: Accessor<User>, chats: Accessor<Chat[]>, currentCorrespondent: Accessor<Chat>, logout: () => Promise<void> }> = (props) => {
   const share = async () => {
     const link = window.location.host + "/?m=" + props.currentUser().alias;
     if (isMobile() && window.navigator.share) {

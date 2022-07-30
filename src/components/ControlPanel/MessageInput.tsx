@@ -1,7 +1,8 @@
 import { Accessor, createEffect, createSignal, Setter } from "solid-js";
+import type { JSX } from 'solid-js';
 
 export function MessageInput(props: {
-  onSubmit: (event: any) => Promise<void>;
+  onSubmit: (event: JSX.EventHandler<HTMLFormElement, SubmitEvent>) => Promise<void>;
   id: string;
   name: string;
   value: Accessor<string>

@@ -4,11 +4,18 @@ import {
   createContext,
   useContext,
   createSignal,
+  Accessor,
 } from "solid-js";
 import { initMessengerApi } from "./api";
 import { getCurrentHashValue, normalizeByKey } from "./utils";
+import { Chat, Message, User } from "@/types/api";
 
-export const MessengerContext = createContext();
+export const MessengerContext = createContext<{
+  chats: Accessor<Chat[]>,
+  messages: Accessor<Message[]>,
+  currentCorrespondent: Accessor<Chat>,
+  sendMessage: (message: string) => Promise<void>
+}>();
 
 export function MessengerContextProvider(props) {
   const currentUser = props.currentUser;
@@ -140,7 +147,7 @@ export function MessengerContextProvider(props) {
     } catch (error) {
       console.error(error);
     } finally {
-      if(currentUser() !== null && isInited()){
+      if (currentUser() !== null && isInited()) {
         setTimeout(() => startPolling(), 2000);
       }
     }
@@ -165,7 +172,7 @@ export function MessengerContextProvider(props) {
     }
   });
 
-  async function send(message) {
+  async function send(message: string) {
     const toPublicKey = currentOpenedCorrespondentPublicKey();
     const result = await api.sendMessage({
       toPublicKey,
