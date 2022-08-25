@@ -1,11 +1,13 @@
 import { ft } from "@/utils/ft";
 import { User } from "@/types/api";
+import { USERS_ROOT, AUTH_ROOT} from "@/constants/apiPaths"
+
 export async function createUser(payload: {
   name: string;
   alias: string;
   publicKey: string;
 }): Promise<{}> {
-  const response = await ft("/users", {
+  const response = await ft(USERS_ROOT, {
     method: "POST",
     body: JSON.stringify(payload),
   });
@@ -22,7 +24,7 @@ export async function getAuthenticationData(publicKey: string): Promise<{
   msg: Uint8Array;
   publicKey: Uint8Array;
 }> {
-  const response = await ft(`/users/auth/authenticationData/${publicKey}`);
+  const response = await ft(`${AUTH_ROOT}/authenticationData/${publicKey}`);
 
   if (!response.ok) {
     const json = await response.json();
@@ -40,7 +42,7 @@ export async function authenticate(
   decryptedMsg: Uint8Array,
   publicKey: string
 ): Promise<{ user: User }> {
-  const response = await ft("/users/auth/authenticate", {
+  const response = await ft(`${AUTH_ROOT}/authenticate`, {
     method: "POST",
     body: JSON.stringify({ decryptedMsg: Array.from(decryptedMsg), publicKey }),
   });
@@ -54,7 +56,7 @@ export async function authenticate(
 }
 
 export async function login() {
-  const response = await ft("/users/auth/login");
+  const response = await ft(`${AUTH_ROOT}/login`);
 
   if (response.status === 401) {
     throw new Error("Failed to login");
@@ -64,7 +66,7 @@ export async function login() {
 }
 
 export async function logout() {
-  const response = await ft("/users/auth/logout", { method: "POST" });
+  const response = await ft(`${AUTH_ROOT}/logout`, { method: "POST" });
 
   if (!response.ok) {
     throw new Error("Failed to logout");

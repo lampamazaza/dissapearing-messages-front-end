@@ -1,8 +1,5 @@
 import { AuthenticatePanel } from "./AuthenticatePanel";
 import { CreateAccount } from "./CreateAccount";
-import { useAuthenctionContext } from "./AuthenticationContext/AuthenticationContext";
-import { useMessenger } from "../MessengerContext";
-import { effect } from "solid-js/web";
 import { Welcome } from "./Welcome";
 import { createSignal, Switch, Match } from "solid-js";
 enum AUTH_STEPS {

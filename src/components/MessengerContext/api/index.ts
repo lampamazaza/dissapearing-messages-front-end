@@ -1,8 +1,9 @@
 import { ft } from "@/utils/ft";
+import {MSG_ROOT, CHATS_ROOT, USERS_ROOT} from "@/constants/apiPaths"
 
 export function initMessengerApi({ onAuthFail }) {
   async function getChatsByUserId() {
-    const response = await ft("/chats");
+    const response = await ft(CHATS_ROOT);
 
     if (response.status === 401) {
       onAuthFail();
@@ -13,7 +14,7 @@ export function initMessengerApi({ onAuthFail }) {
   }
 
   async function getUserByAlias(alias) {
-    const response = await ft(`/users/${alias}`);
+    const response = await ft(`${USERS_ROOT}/${alias}`);
 
     if (response.status === 401) {
       onAuthFail();
@@ -23,7 +24,7 @@ export function initMessengerApi({ onAuthFail }) {
   }
 
   async function getUserbyPublicKey(publicKey) {
-    const response = await ft(`/users/byPublicKey/${publicKey}`);
+    const response = await ft(`${USERS_ROOT}/byPublicKey/${publicKey}`);
     if (response.status === 401) {
       onAuthFail();
       return;
@@ -32,7 +33,7 @@ export function initMessengerApi({ onAuthFail }) {
   }
 
   async function getMessagesInChat(alias) {
-    const response = await ft(`/messages/${alias}`);
+    const response = await ft(`${MSG_ROOT}/${alias}`);
     if (response.status === 401) {
       onAuthFail();
       return;
@@ -44,7 +45,7 @@ export function initMessengerApi({ onAuthFail }) {
     toPublicKey: string;
     message: string;
   }) {
-    const response = await ft("/messages", {
+    const response = await ft(MSG_ROOT, {
       method: "POST",
       body: JSON.stringify(payload),
     });
@@ -56,7 +57,7 @@ export function initMessengerApi({ onAuthFail }) {
   }
 
   async function pollingSubscriber() {
-    const response = await ft("/messages/subscribe", {
+    const response = await ft(`${MSG_ROOT}/subscribe`, {
       method: "POST",
     });
     if (response.status === 401) {

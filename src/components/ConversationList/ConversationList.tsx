@@ -19,7 +19,7 @@ export const ConversationList: Component<{ currentUser: Accessor<User>, chats: A
         baton.error("Failed to share");
       }
     } else {
-      copyToClipboard(link);
+      await copyToClipboard(link);
       baton.success("Share link copied");
     }
   };
