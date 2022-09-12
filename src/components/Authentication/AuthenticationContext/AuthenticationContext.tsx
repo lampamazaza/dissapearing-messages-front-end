@@ -18,10 +18,8 @@ import {
   keyToPortable,
   encodePrivateKey,
   decodePrivateKey,
-  deriveBackEndKey,
   decryptBackEndMessage,
-  deriveSecretKey,
-} from "@/services/cryptoServiceECDH";
+} from "@/services/cryptoService";
 import type { Accessor, Setter } from "solid-js";
 import { User } from "@/types/api";
 import baton from "@/services/baton";
@@ -116,25 +114,19 @@ export function AuthenticationContextProvider(props) {
     // get keypair from localstorage
     const { publicKey, encryptedPrivateKey } =
       keysStorageService.getKeyPair(alias);
-    // decryptPrivateKey which is JWK that is used for importing the key
-    const myPrivateKey = await decodePrivateKey(encryptedPrivateKey, password);
+    const myPrivateKey = decodePrivateKey(encryptedPrivateKey, password);
 
-    // Ask back end for salt, encrypted msg, and public key
     const {
-      iv,
+      publicKey: publicKeyFromBackEnd,
       msg,
-      publicKey: rawBackEndPublicKey,
     } = await getAuthenticationData(publicKey);
-    // create a back end public key from jwk
-    const backEndPublicKey = await deriveBackEndKey(rawBackEndPublicKey);
-    // derive secret
-    const mySharedSecret = await deriveSecretKey(
-      myPrivateKey,
-      backEndPublicKey
-    );
-    // decrypt msg
-    const decryptedMsg = await decryptBackEndMessage(mySharedSecret, msg, iv);
-    // // ask BackEnd to check if msg is the same as it was encrypted
+
+    const decryptedMsg = decryptBackEndMessage({
+      msg,
+      publicKeyFromBackEnd,
+      clientPrivateKey: myPrivateKey
+    });
+
     const { user } = await authenticate(decryptedMsg, publicKey);
 
     setCurrentUser(user);

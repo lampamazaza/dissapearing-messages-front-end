@@ -20,7 +20,10 @@
     "vite-plugin-solid": "2.3.0"
   },
   "dependencies": {
-    "solid-js": "1.4.7"
+    "solid-js": "1.4.7",
+    "tweetnacl": "1.0.3",
+    "tweetnacl-util": "0.15.1",
+    "base58-js": "1.0.4"
   },
   "author": "",
   "license": "ISC",

@@ -20,9 +20,8 @@ export async function createUser(payload: {
   return response.json();
 }
 export async function getAuthenticationData(publicKey: string): Promise<{
-  iv: Uint8Array;
-  msg: Uint8Array;
-  publicKey: Uint8Array;
+  publicKey: string;
+  msg: string;
 }> {
   const response = await ft(`${AUTH_ROOT}/authenticationData/${publicKey}`);
 
@@ -32,19 +31,17 @@ export async function getAuthenticationData(publicKey: string): Promise<{
   }
 
   const json = await response.json();
-  for (let key in json) {
-    json[key] = Uint8Array.from(json[key]);
-  }
+
   return json;
 }
 
 export async function authenticate(
-  decryptedMsg: Uint8Array,
+  decryptedMsg: string,
   publicKey: string
 ): Promise<{ user: User }> {
   const response = await ft(`${AUTH_ROOT}/authenticate`, {
     method: "POST",
-    body: JSON.stringify({ decryptedMsg: Array.from(decryptedMsg), publicKey }),
+    body: JSON.stringify({ decryptedMsg: decryptedMsg, publicKey }),
   });
 
   if (!response.ok) {
