@@ -9,26 +9,42 @@ import { Messenger } from "./components/Messenger";
 import { MessengerContextProvider } from "./components/MessengerContext/MessengerContext";
 
 const App = () => {
-  const { currentUser, authenticate, createUser, status, resetOnAuthTokenExpired } =
-    useAuthenctionContext();
+  const {
+    currentUser,
+    authenticate,
+    createUser,
+    status,
+    privateKey,
+    resetOnAuthTokenExpired,
+    unlockWithPasscode,
+  } = useAuthenctionContext();
 
   return (
     <Show
-      when={currentUser() !== null}
+      when={status() === AUTH_STATUS.AUTHENTICATED}
       fallback={
         <Show
-          when={status() === AUTH_STATUS.NON_AUTHENTICATED}
+          when={status() !== AUTH_STATUS.TRYING_TO_AUTHENTICATE}
           fallback={
             <div class="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
               <Spinner />
             </div>
           }
         >
-          <Authentication createUser={createUser} authenticate={authenticate} />
+          <Authentication
+            createUser={createUser}
+            authenticate={authenticate}
+            unlockWithPasscode={unlockWithPasscode}
+            needToUnlockOnly={currentUser() !== null}
+          />
         </Show>
       }
     >
-     <MessengerContextProvider currentUser={currentUser} resetOnAuthTokenExpired={resetOnAuthTokenExpired} >
+      <MessengerContextProvider
+        currentUser={currentUser}
+        privateKey={privateKey}
+        resetOnAuthTokenExpired={resetOnAuthTokenExpired}
+      >
         <Messenger />
       </MessengerContextProvider>
     </Show>

@@ -1,6 +1,6 @@
 import { ft } from "@/utils/ft";
 import { User } from "@/types/api";
-import { USERS_ROOT, AUTH_ROOT} from "@/constants/apiPaths"
+import { USERS_ROOT, AUTH_ROOT } from "@/constants/apiPaths";
 
 export async function createUser(payload: {
   name: string;

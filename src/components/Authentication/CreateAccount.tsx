@@ -6,7 +6,7 @@ export function CreateAccount({
 }: {
   createUser: (payload: {
     alias: string;
-    password: string;
+    passcode: string;
     name;
   }) => Promise<void>;
 
@@ -19,7 +19,7 @@ export function CreateAccount({
       await createUser({
         name: formData.get("name"),
         alias: formData.get("alias") as string,
-        password: formData.get("password") as string,
+        passcode: formData.get("passcode") as string,
       });
     } catch (error) {
       baton.error(error.message || "Failed to create account");
@@ -68,15 +68,18 @@ export function CreateAccount({
           </div>
           <div>
             <label
-              for="password"
+              for="passcode"
               class="block mb-2 text-xs font-medium text-gray-900 "
             >
-              Password (can't be restored once the profile is created)
+              Passcode (7 digits)
             </label>
             <input
-              type="password"
-              id="password"
-              name="password"
+              type="text"
+              maxLength="7"
+              minLength="7"
+              id="passcode"
+              name="passcode"
+              pattern="[0-9]{7}"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
             />

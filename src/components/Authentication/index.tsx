@@ -1,20 +1,25 @@
 import { AuthenticatePanel } from "./AuthenticatePanel";
+import { EnterPasscode } from "./EnterPasscode";
 import { CreateAccount } from "./CreateAccount";
 import { Welcome } from "./Welcome";
 import { createSignal, Switch, Match } from "solid-js";
+
 enum AUTH_STEPS {
   INITIAL,
   CREATE_ACCOUNT,
   AUTHENTICATE,
+  ENTER_PASS,
 }
 
 export function Authentication(props) {
-  const [step, setStep] = createSignal(AUTH_STEPS.INITIAL);
+  const [step, setStep] = createSignal(
+    props.needToUnlockOnly ? AUTH_STEPS.ENTER_PASS : AUTH_STEPS.INITIAL
+  );
 
   const onCreateUser = async (newUserData: {
     name: string;
     alias: string;
-    password: string;
+    passcode: string;
   }) => {
     await props.createUser(newUserData);
     await props.authenticate(newUserData);
@@ -22,7 +27,7 @@ export function Authentication(props) {
 
   const onAuthenticate = async (payload: {
     alias: string;
-    password: string;
+    passcode: string;
   }) => {
     await props.authenticate(payload);
   };
@@ -42,6 +47,12 @@ export function Authentication(props) {
         </Match>
         <Match when={step() === AUTH_STEPS.AUTHENTICATE}>
           <AuthenticatePanel back={toWelcome} authenticate={onAuthenticate} />
+        </Match>
+        <Match when={step() === AUTH_STEPS.ENTER_PASS}>
+          <EnterPasscode
+            back={toWelcome}
+            unlockWithPasscode={props.unlockWithPasscode}
+          />
         </Match>
       </Switch>
     </div>

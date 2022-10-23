@@ -26,7 +26,7 @@ export const ChatWindow: Component<{ currentUser: Accessor<User>, messages: Acce
         style={{
           height: "calc(100vh - 140px)",
         }}
-        class="bg-main flex flex-1 flex-col overflow-scroll bg-white  border-gray-200 p-20 scrollbar-hide"
+        class="bg-main flex flex-1 flex-col overflow-scroll bg-white border-gray-200 p-20 scrollbar-hide"
       >
         <For each={props.messages()}>
           {({ text, sender, sentAt }) => {

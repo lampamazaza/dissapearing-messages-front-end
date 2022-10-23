@@ -4,7 +4,7 @@ export function AuthenticatePanel({
   authenticate,
   back,
 }: {
-  authenticate: (payload: { alias: string; password: string }) => Promise<void>;
+  authenticate: (payload: { alias: string; passcode: string }) => Promise<void>;
   back: () => void;
 }) {
   const onSubmit = async (event) => {
@@ -13,7 +13,7 @@ export function AuthenticatePanel({
       const formData = new FormData(event.target);
       await authenticate({
         alias: formData.get("alias") as string,
-        password: formData.get("password") as string,
+        passcode: formData.get("passcode") as string,
       });
     } catch (error) {
       baton.error(error.message || "Failed to authenticate");
@@ -47,15 +47,18 @@ export function AuthenticatePanel({
           </div>
           <div>
             <label
-              for="password"
+              for="passcode"
               class="block mb-2 text-xs font-medium text-gray-900 "
             >
-              Password
+              Passcode (7 digits)
             </label>
             <input
-              type="password"
-              id="password"
-              name="password"
+              type="text"
+              maxLength="7"
+              minLength="7"
+              id="passcode"
+              name="passcode"
+              pattern="[0-9]{7}"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
             />

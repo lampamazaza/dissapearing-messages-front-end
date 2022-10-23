@@ -6,23 +6,32 @@ import {
   createSignal,
   Accessor,
 } from "solid-js";
-import { initMessengerApi } from "./api";
+import { initMessengerService } from "@/services/messaging";
+import { initMessengerTransportService } from "@/transport/messages";
+import { initMessageCryptoService } from "@/services/messageCryptoService";
 import { getCurrentHashValue, normalizeByKey } from "./utils";
-import { Chat, Message, User } from "@/types/api";
+import { Chat, Message } from "@/types/api";
+import { MessengerChat } from "./types";
+import baton from "@/services/baton";
 
 export const MessengerContext = createContext<{
-  chats: Accessor<Chat[]>,
-  messages: Accessor<Message[]>,
-  currentCorrespondent: Accessor<Chat>,
-  sendMessage: (message: string) => Promise<void>
+  chats: Accessor<MessengerChat[]>;
+  messages: Accessor<Message[]>;
+  currentCorrespondent: Accessor<Chat>;
+  sendMessage: (message: string) => Promise<void>;
 }>();
 
 export function MessengerContextProvider(props) {
   const currentUser = props.currentUser;
   const resetOnAuthTokenExpired = props.resetOnAuthTokenExpired;
 
-  const api = initMessengerApi({
-    onAuthFail: () => resetOnAuthTokenExpired(),
+  const msgService = initMessengerService({
+    transportService: initMessengerTransportService({
+      onAuthFail: () => resetOnAuthTokenExpired(),
+    }),
+    messageEncryptionService: initMessageCryptoService({
+      currentUserPrivateKey: props.privateKey(),
+    }),
   });
 
   const [
@@ -43,24 +52,36 @@ export function MessengerContextProvider(props) {
     if (!isInited()) {
       const alias = new URLSearchParams(window.location.search).get("m");
       //init
-      const chats = await api.getChatsByUserId();
+      const chats = (await msgService.getChatsByUserId()) as MessengerChat[];
       let currentChatMessages = [];
       let correspondentPublicKey = "";
       if (alias) {
         const user = chats.find(({ user }) => user.alias === alias);
         if (!user) {
-          // Unkown guy
-          const { name, publicKey } = await api.getUserByAlias(alias);
-          chats.unshift({
-            user: { name, publicKey, alias },
-            publicKey,
-            lastMessage: {
-              text: "",
-            },
-          });
-          correspondentPublicKey = publicKey;
+          // Unknown guy
+          const user = await msgService.getUserByAlias(alias);
+          if (user) {
+            chats.unshift({
+              user: {
+                id: user.id,
+                name: user.name,
+                publicKey: user.publicKey,
+                alias,
+              },
+              publicKey: user.publicKey,
+              lastMessage: {
+                text: `Type smth to ${user.name}`,
+              },
+            });
+            correspondentPublicKey = user.publicKey;
+          } else {
+            baton.error(`User ${user.name} doesn't exist`);
+          }
         } else {
-          currentChatMessages = await api.getMessagesInChat(alias);
+          currentChatMessages = await msgService.getMessagesInChat(
+            user.publicKey
+          );
+          console.log(currentChatMessages);
           correspondentPublicKey = user.publicKey;
         }
       }
@@ -89,7 +110,7 @@ export function MessengerContextProvider(props) {
 
   async function startPolling() {
     try {
-      const data = await api.pollingSubscriber();
+      const data = await msgService.pollingSubscriber();
       const activeChatPublicKey = currentOpenedCorrespondentPublicKey();
       for (let publicKey in data) {
         if (publicKey === activeChatPublicKey) {
@@ -116,7 +137,9 @@ export function MessengerContextProvider(props) {
         } else {
           if (!chats()[publicKey]) {
             // Unkown guy
-            const { name, alias } = await api.getUserbyPublicKey(publicKey);
+            const { name, alias } = await msgService.getUserbyPublicKey(
+              publicKey
+            );
             const newChat = {
               user: { name, publicKey, alias },
               publicKey,
@@ -162,7 +185,7 @@ export function MessengerContextProvider(props) {
       !messages[currentCorrespondentPublicKey]
     ) {
       //init
-      const newMessages = await api.getMessagesInChat(
+      const newMessages = await msgService.getMessagesInChat(
         currentCorrespondentPublicKey
       );
       setMessages((messages) => ({
@@ -174,10 +197,12 @@ export function MessengerContextProvider(props) {
 
   async function send(message: string) {
     const toPublicKey = currentOpenedCorrespondentPublicKey();
-    const result = await api.sendMessage({
+    const result = await msgService.sendMessage({
       toPublicKey,
       message: message,
     });
+
+    result.text = message;
 
     batch(() => {
       setMessages((value) => ({
@@ -207,7 +232,7 @@ export function MessengerContextProvider(props) {
         messages: () => messages()[currentOpenedCorrespondentPublicKey()],
         currentCorrespondent: () =>
           chats()[currentOpenedCorrespondentPublicKey()],
-        sendMessage: send
+        sendMessage: send,
       }}
     >
       {props.children}
