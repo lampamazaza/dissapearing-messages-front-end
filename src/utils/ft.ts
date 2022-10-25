@@ -1,4 +1,4 @@
-const JSON_TYPE= "application/json"
+const JSON_TYPE = "application/json";
 
 const DEFAULT_OPTIONS = {
   credentials: "include" as RequestCredentials,
@@ -8,7 +8,7 @@ const DEFAULT_OPTIONS = {
   },
 };
 
-const API_ROOT = import.meta.env.VITE_API_ROOT;
+const API_ROOT = process.env.API_ROOT;
 
 export async function ft(url: string, options?: RequestInit) {
   return fetch(
