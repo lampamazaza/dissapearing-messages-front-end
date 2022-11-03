@@ -8,7 +8,9 @@ export function Welcome({
   return (
     <div class="flex flex-col justify-center items-center w-screen	 h-screen p-9">
       <div class="flex flex-col w-full max-w-[400px] justify-center p-6 bg-white rounded-lg border border-gray-200 shadow-md">
-        <div class="text-center text-[100px] select-none">🧙‍♂️</div>
+        <div class="text-center select-none">
+          <img src="/logo.svg" width={100} height="100" class="inline-block" />
+        </div>
         <span class="text-20 whitespace-nowrap text-center font-bold">
           Welcome, kind Sir!
         </span>
