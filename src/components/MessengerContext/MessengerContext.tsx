@@ -81,7 +81,6 @@ export function MessengerContextProvider(props) {
           currentChatMessages = await msgService.getMessagesInChat(
             user.publicKey
           );
-          console.log(currentChatMessages);
           correspondentPublicKey = user.publicKey;
         }
       }

@@ -31,7 +31,6 @@ export function initMessageCryptoService({
   }
 
   function decrypt(messageToDecrypt: string, secretOrSharedKey: Uint8Array) {
-    console.log(messageToDecrypt, secretOrSharedKey);
     const messageWithNonceAsUint8Array = base58_to_binary(messageToDecrypt);
     const nonce = messageWithNonceAsUint8Array.slice(0, box.nonceLength);
     const message = messageWithNonceAsUint8Array.slice(
