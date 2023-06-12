@@ -13,6 +13,7 @@ import { getCurrentHashValue, normalizeByKey } from "./utils";
 import { Chat, Message } from "@/types/api";
 import { MessengerChat } from "./types";
 import baton from "@/services/baton";
+import { initMessagesUpdatesService } from "@/services/updatesService";
 
 export const MessengerContext = createContext<{
   chats: Accessor<MessengerChat[]>;
@@ -24,14 +25,21 @@ export const MessengerContext = createContext<{
 export function MessengerContextProvider(props) {
   const currentUser = props.currentUser;
   const resetOnAuthTokenExpired = props.resetOnAuthTokenExpired;
+  const messageEncryptionService = initMessageCryptoService({
+    currentUserPrivateKey: props.privateKey(),
+  });
 
   const msgService = initMessengerService({
     transportService: initMessengerTransportService({
       onAuthFail: () => resetOnAuthTokenExpired(),
     }),
-    messageEncryptionService: initMessageCryptoService({
-      currentUserPrivateKey: props.privateKey(),
-    }),
+    messageEncryptionService,
+  });
+
+  initMessagesUpdatesService({
+    onUpdate: (data: Message) => startPolling(data),
+    messageEncryptionService,
+    userIdentifier: currentUser().publicKey,
   });
 
   const [
@@ -97,7 +105,6 @@ export function MessengerContextProvider(props) {
           window.location.hash = correspondentPublicKey;
         }
       });
-      startPolling();
     }
   };
 
@@ -107,19 +114,19 @@ export function MessengerContextProvider(props) {
     }
   });
 
-  async function startPolling() {
+  async function startPolling(message: Message) {
     try {
-      const data = await msgService.pollingSubscriber();
-      const activeChatPublicKey = currentOpenedCorrespondentPublicKey();
-      for (let publicKey in data) {
+      if (currentUser() !== null) {
+        const activeChatPublicKey = currentOpenedCorrespondentPublicKey();
+        const publicKey = message.sender;
         if (publicKey === activeChatPublicKey) {
-          const messagesToAdd = data[activeChatPublicKey];
           batch(() => {
             setMessages((value) => ({
               ...value,
               ...{
-                [activeChatPublicKey]:
-                  value[activeChatPublicKey].concat(messagesToAdd),
+                [activeChatPublicKey]: value[activeChatPublicKey].concat([
+                  message,
+                ]),
               },
             }));
             setChats((value) => {
@@ -127,7 +134,7 @@ export function MessengerContextProvider(props) {
                 ...value,
                 ...{
                   [publicKey]: Object.assign({}, value[publicKey], {
-                    lastMessage: messagesToAdd.pop(),
+                    lastMessage: message,
                   }),
                 },
               };
@@ -142,7 +149,7 @@ export function MessengerContextProvider(props) {
             const newChat = {
               user: { name, publicKey, alias },
               publicKey,
-              lastMessage: data[publicKey].pop(),
+              lastMessage: message,
             };
             setChats((value) => {
               return {
@@ -158,7 +165,7 @@ export function MessengerContextProvider(props) {
                 ...value,
                 ...{
                   [publicKey]: Object.assign({}, value[publicKey], {
-                    lastMessage: data[publicKey].pop(),
+                    lastMessage: message,
                   }),
                 },
               };
@@ -168,10 +175,6 @@ export function MessengerContextProvider(props) {
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      if (currentUser() !== null && isInited()) {
-        setTimeout(() => startPolling(), 2000);
-      }
     }
   }
 

@@ -4,7 +4,7 @@ import { Chat, User, Message, MessagesPollingUpdates } from "@/types/api";
 
 export interface IMessageTransport {
   getChatsByUserId: () => Promise<Chat[]>;
-  pollingSubscriber: () => Promise<MessagesPollingUpdates>;
+  // pollingSubscriber: () => Promise<MessagesPollingUpdates>;
   getMessagesInChat: (publicKey: string) => Promise<Message[]>;
   getUserByAlias: (alias: string) => Promise<User>;
   sendMessage: (payload: {
@@ -76,22 +76,22 @@ export function initMessengerTransportService({
     return response.json();
   }
 
-  async function pollingSubscriber() {
-    const response = await ft(`${MSG_ROOT}/subscribe`, {
-      method: "POST",
-    });
-    if (response.status === 401) {
-      onAuthFail();
-      return;
-    }
-    return response.json();
-  }
+  // async function pollingSubscriber() {
+  //   const response = await ft(`${MSG_ROOT}/subscribe`, {
+  //     method: "POST",
+  //   });
+  //   if (response.status === 401) {
+  //     onAuthFail();
+  //     return;
+  //   }
+  //   return response.json();
+  // }
 
   return {
     getChatsByUserId,
     getMessagesInChat,
     sendMessage,
-    pollingSubscriber,
+    // pollingSubscriber,
     getUserByAlias,
     getUserbyPublicKey,
   };

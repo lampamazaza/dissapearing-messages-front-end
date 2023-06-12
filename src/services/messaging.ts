@@ -4,8 +4,8 @@ import { IMessageEncryptionService } from "@/services/messageCryptoService";
 
 interface IMessageService {
   getChatsByUserId: () => Promise<Chat[]>;
-  pollingSubscriber: () => Promise<MessagesPollingUpdates>;
-  getMessagesInChat: (alias: string) => Promise<Message[]>;
+  // pollingSubscriber: () => Promise<MessagesPollingUpdates>;
+  getMessagesInChat: (publicKey: string) => Promise<Message[]>;
   getUserByAlias: (alias: string) => Promise<User>;
   sendMessage: (user) => Promise<Message>;
   getUserbyPublicKey: (publicKey: string) => Promise<User>;
@@ -58,25 +58,25 @@ export function initMessengerService({
     });
   }
 
-  async function pollingSubscriber() {
-    const messagesMap = await transportService.pollingSubscriber();
-    for (let publicKey in messagesMap) {
-      messagesMap[publicKey].forEach((message) => {
-        message.text = messageEncryptionService.decrypt(
-          message.text,
-          message.sender
-        );
-      });
-    }
+  // async function pollingSubscriber() {
+  //   const messagesMap = await transportService.pollingSubscriber();
+  //   for (let publicKey in messagesMap) {
+  //     messagesMap[publicKey].forEach((message) => {
+  //       message.text = messageEncryptionService.decrypt(
+  //         message.text,
+  //         message.sender
+  //       );
+  //     });
+  //   }
 
-    return messagesMap;
-  }
+  //   return messagesMap;
+  // }
 
   return {
     getChatsByUserId,
     getMessagesInChat,
     sendMessage,
-    pollingSubscriber,
+    // pollingSubscriber,
     getUserByAlias,
     getUserbyPublicKey,
   };

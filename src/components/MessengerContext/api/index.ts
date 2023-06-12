@@ -1,5 +1,5 @@
 import { ft } from "@/utils/ft";
-import {MSG_ROOT, CHATS_ROOT, USERS_ROOT} from "@/constants/apiPaths"
+import { MSG_ROOT, CHATS_ROOT, USERS_ROOT } from "@/constants/apiPaths";
 
 export function initMessengerApi({ onAuthFail }) {
   async function getChatsByUserId() {
@@ -32,8 +32,8 @@ export function initMessengerApi({ onAuthFail }) {
     return response.json();
   }
 
-  async function getMessagesInChat(alias) {
-    const response = await ft(`${MSG_ROOT}/${alias}`);
+  async function getMessagesInChat(publicKey) {
+    const response = await ft(`${MSG_ROOT}/${publicKey}`);
     if (response.status === 401) {
       onAuthFail();
       return;
@@ -56,22 +56,22 @@ export function initMessengerApi({ onAuthFail }) {
     return response.json();
   }
 
-  async function pollingSubscriber() {
-    const response = await ft(`${MSG_ROOT}/subscribe`, {
-      method: "POST",
-    });
-    if (response.status === 401) {
-      onAuthFail();
-      return;
-    }
-    return response.json();
-  }
+  // async function pollingSubscriber() {
+  //   const response = await ft(`${MSG_ROOT}/subscribe`, {
+  //     method: "POST",
+  //   });
+  //   if (response.status === 401) {
+  //     onAuthFail();
+  //     return;
+  //   }
+  //   return response.json();
+  // }
 
   return {
     getChatsByUserId,
     getMessagesInChat,
     sendMessage,
-    pollingSubscriber,
+    // pollingSubscriber,
     getUserByAlias,
     getUserbyPublicKey,
   };
